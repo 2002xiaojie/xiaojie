@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <bean id="helloServiceImpl" class="edu.soft1.service.impl.HelloServiceImpl"></bean>
+    <bean id="helloAspect" class="edu.soft1.aop.HelloAspect"></bean>
+    <!--配置aop-->
+    <aop:config proxy-target-class="true" expose-proxy="true">
+        <!--配置切点，那些包和类会被执行增强-->
+        <aop:pointcut id="helloPointcut" expression="execution(* edu.soft1.service.impl.HelloServiceImpl.sayHello())"/>
+        <!--配置面 设置前置后置等-->
+        <aop:aspect ref="helloAspect">
+            <!--前置增强（要确定是那个切点），引入（pointcut-ref属性）切点为helloPointcut-->
+            <aop:before method="beforeHello" pointcut-ref="helloPointcut"></aop:before>
+            <aop:after method="afterHello" pointcut-ref="helloPointcut"></aop:after>
+
+        </aop:aspect>
+    </aop:config>
+
+
+<!--<bean id="bean" class="edu.soft1.pojo.CoffeeBean">
+    <property name="flavor">
+        <value>咖啡</value>
+    </property>
+
+</bean>-->
+    <bean id="EspressoBean" class="edu.soft1.pojo.EspressoBean">
+        <property name="flavor"><!--字符串类型-->
+            <value>意大利浓缩</value>
+        </property>
+
+    </bean>
+    <bean id="MocaBean" class="edu.soft1.pojo.MocaBean">
+    <property name="flavor"><!--字符串类型-->
+        <value>摩卡</value>
+    </property>
+    </bean>
+    <bean id="coffeeMachine" class="edu.soft1.pojo.CoffeeMachine">
+        <property name="bean" ref="MocaBean"><!--对象类型-->
+        </property>
+    </bean>
+
+    <bean id="colorInk" class="edu.soft1.ioc.printing.ColorInk" scope="singleton">
+        <property name="color"><value>彩色</value></property>
+    </bean>
+    <bean id="greyInk" class="edu.soft1.ioc.printing.GreyInk" scope="singleton">
+        <property name="color"><value>灰色</value></property>
+    </bean>
+    <bean id="b5Paper" class="edu.soft1.ioc.printing.B5Paper" scope="singleton">
+        <property name="size"><value>B5</value></property>
+    </bean>
+    <bean id="a4Paper" class="edu.soft1.ioc.printing.A4Paper" scope="singleton">
+        <property name="size"><value>A4</value></property>
+    </bean>
+<!--外部注入-->
+    <bean id="printer" class="edu.soft1.ioc.printing.Printer" scope="singleton">
+        <property name="ink" ref="colorInk"></property>
+        <property name="paper" ref="a4Paper"></property>
+    </bean>
+    <!--开启注解扫描，框架会自动扫描注解并生成bean对象-->
+    <context:component-scan base-package="edu.soft1"/>
+    <!---->
+    <aop:aspectj-autoproxy/>
+    <!---->
+    <aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true"/>
+
+</beans>
